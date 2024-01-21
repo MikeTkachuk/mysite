@@ -1,0 +1,61 @@
+$background-color: rgba(0, 0, 255, 0.7); // Blue semitransparent background
+$rain-color: #ccc; // Gray rain color
+$raindrop-duration: 4s;
+$flash-color: #fff; // White flash color
+
+body {
+  background-color: $background-color;
+  overflow: hidden;
+}
+
+@keyframes rainAnimation {
+  from {
+    transform: translateY(0vh) translateX(0vw) rotate(-45deg);
+    visibility: visible;
+  }
+
+  to {
+    transform: translateY(100vh) translateX(100vw) rotate(-45deg);
+  }
+}
+
+
+.raindrop {
+  position: absolute;
+  width: 2px;
+  height: 10px;
+  background-color: $rain-color;
+  animation: rainAnimation linear infinite;
+  animation-duration: $raindrop-duration;
+  visibility: hidden;
+}
+
+.flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: $flash-color;
+  animation: flashAnimation 0.2s ease-out;
+  animation-fill-mode: forwards;
+  opacity: 0;
+}
+
+@keyframes flashAnimation {
+  50% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+// Create raindrops
+@for $i from 1 through 100 {
+  .raindrop:nth-child(#{$i}) {
+    left: (random(200) - 100) * 1vw;
+    animation-delay: random() * $raindrop-duration;
+  }
+}
