@@ -158,19 +158,6 @@ function translate4(a, x, y, z, world=false) {
     ];
 }
 
-function snapXAxis_(a) {
-    let x = [a[0], a[1], a[2]]
-    cos = Math.max(-1, Math.min(x[2], 1))
-    let rad = -Math.acos(cos)
-    let axis = [
-        -x[2]*x[1],
-        x[2]*x[0],
-        0
-    ]
-    let out = rotate4(a, rad, ...axis)
-    return out
-}
-
 function dot3(a, b) {
     return a[0]*b[0] + a[1]*b[1] + a[2]*b[2]
 }
@@ -182,7 +169,17 @@ function cross3(a, b) {
         a[0] * b[1] - a[1] * b[0]]
 }
 
+function apply3(a, v) {
+    // a is 4x4
+    return [
+        a[0] * v[0] + a[1] * v[1] + a[2] * v[2],
+        a[4] * v[0] + a[5] * v[1] + a[6] * v[2],
+        a[8] * v[0] + a[9] * v[1] + a[10] * v[2],
+    ]
+}
+
 function snapXAxis(a) {
+    // designed for transform to camera coordinates
     let x = [a[0], a[4], a[8]]
     let y = [a[1], a[5], a[9]]
     let z = [a[2], a[6], a[10]]
@@ -196,17 +193,21 @@ function snapXAxis(a) {
     let y_proj = [y[0] - xy_dot * x_proj[0], y[1] - xy_dot * x_proj[1], y[2] - xy_dot * x_proj[2]]
     let y_norm = Math.hypot(...y_proj)
     let xz_dot = dot3(x_proj, z)
-    let z_proj = [z[0] - xz_dot * x_proj[0], z[1] - xz_dot * x_proj[1], z[2] - xz_dot * x_proj[2]]
+    // let z_proj = [z[0] - xz_dot * x_proj[0], z[1] - xz_dot * x_proj[1], z[2] - xz_dot * x_proj[2]]
+
+    let z_proj = cross3(x_proj, y_proj)
     let z_norm = Math.hypot(...z_proj)
 
-    z_proj = cross3(x_proj, y_proj)
-
-    return [
+    let new_basis = [
         x_proj[0], y_proj[0]/y_norm, z_proj[0]/z_norm, a[3],
         x_proj[1], y_proj[1]/y_norm, z_proj[1]/z_norm, a[7],
         x_proj[2], y_proj[2]/y_norm, z_proj[2]/z_norm, a[11],
         ...a.slice(12, 16)
     ]
+    let old_tw = apply3(a, a.slice(12, 15))
+    let new_tc = apply3(invert4(new_basis), old_tw)
+    new_basis = [...new_basis.slice(0, 12), ...new_tc, 1]
+    return new_basis
 }
 
 function normalize(a){
@@ -228,6 +229,7 @@ function normalize(a){
 
 function draw_axes(){
     const canvas = document.getElementById("canvas_axes");
+    canvas.style.zIndex = 10
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -246,6 +248,7 @@ function draw_axes(){
     _draw_vector(norm * a[2], norm* a[6], '#0000ff')
 
     const debug = document.getElementById("debug_text")
+    debug.style.zIndex = 10
     let inv = invert4(viewMatrix)
     let t = [12,13,14].map(i => inv[i])
     debug.innerText = t.toString()
@@ -922,7 +925,7 @@ async function main() {
         { passive: false },
     );
 
-    let startX, startY, down;
+    let startX, startY, down, dx_exp=0, dy_exp=0, _lambda=0.9;
     canvas.addEventListener("mousedown", (e) => {
         carousel = false;
         e.preventDefault();
@@ -944,10 +947,13 @@ async function main() {
             let inv = invert4(viewMatrix);
             let dx = (3 * (e.clientX - startX)) / innerWidth;
             let dy = (3 * (e.clientY - startY)) / innerHeight;
+            dx_exp = _lambda * dx_exp + (1 - _lambda) * dx;
+            dy_exp = _lambda * dy_exp + (1 - _lambda) * dy;
+
             console.log(dx, dy)
             
-            inv = rotate4(inv, dx, 0, 1, 0);
-            inv = rotate4(inv, -dy, 1, 0, 0);
+            inv = rotate4(inv, dx_exp, 0, 1, 0);
+            inv = rotate4(inv, -dy_exp, 1, 0, 0);
             viewMatrix = invert4(inv);
 
             startX = e.clientX;
@@ -971,6 +977,8 @@ async function main() {
         down = false;
         startX = 0;
         startY = 0;
+        dx_exp = 0;
+        dy_exp = 0;
     });
 
     canvas.addEventListener(
@@ -1002,10 +1010,13 @@ async function main() {
                 let inv = invert4(viewMatrix);
                 let dx = (2 * (e.touches[0].clientX - startX)) / innerWidth;
                 let dy = (2 * (e.touches[0].clientY - startY)) / innerHeight;
+                dx_exp = _lambda * dx_exp + (1 - _lambda) * dx;
+                dy_exp = _lambda * dy_exp + (1 - _lambda) * dy;
+
                 console.log("touch", dx, dy)
 
-                inv = rotate4(inv, dx, 0, 1, 0);
-                inv = rotate4(inv, -dy, 1, 0, 0);
+                inv = rotate4(inv, dx_exp, 0, 1, 0);
+                inv = rotate4(inv, -dy_exp, 1, 0, 0);
                 
                 viewMatrix = invert4(inv);
 
@@ -1022,6 +1033,8 @@ async function main() {
             down = false;
             startX = 0;
             startY = 0;
+            dx_exp = 0;
+            dy_exp = 0;
         },
         { passive: false },
     );
@@ -1064,8 +1077,7 @@ async function main() {
             inv = rotate4(inv, -0.1, 1, 0, 0)
 
             const t = Math.sin((Date.now() - start) / 5000);
-            // inv = translate4(inv, 2.5 * t, 0, 6 * (1 - Math.cos(t)));
-            // let z_dst = invert4(inv)[14]
+
             let  z_dst = 0.43+1
             inv = translate4(inv, 0, 0, z_dst)
             inv = rotate4(inv, 0.9 * t, 0, 1, 0);
@@ -1074,13 +1086,11 @@ async function main() {
             viewMatrix = invert4(inv);
         }
 
-        viewMatrix = snapXAxis(normalize(viewMatrix))
-        draw_axes()
+        viewMatrix = snapXAxis(viewMatrix)
+        // draw_axes()
 
-        let inv2 = invert4(viewMatrix);
-        inv2 = translate4(inv2, 0, -jumpDelta, 0);
-        inv2 = rotate4(inv2, -0.1 * jumpDelta, 1, 0, 0);
-        let actualViewMatrix = invert4(inv2);
+        
+        let actualViewMatrix = viewMatrix;
 
         const viewProj = multiply4(projectionMatrix, actualViewMatrix);
         worker.postMessage({ view: viewProj });
@@ -1138,7 +1148,8 @@ async function main() {
         });
 }
 
-main().catch((err) => {
-    document.getElementById("spinner").style.display = "none";
-    document.getElementById("message").innerText = err.toString();
-});
+main()
+// .catch((err) => {
+//     document.getElementById("spinner").style.display = "none";
+//     document.getElementById("message").innerText = err.toString();
+// });
