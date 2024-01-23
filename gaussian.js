@@ -1051,22 +1051,22 @@ async function main() {
         let inv = invert4(viewMatrix);
 
         if (activeKeys.includes("ArrowUp") || activeKeys.includes("KeyW")) {
-                inv = translate4(inv, 0, 0, 0.03);
+                inv = translate4(inv, 0, 0, 0.003);
         }
         if (activeKeys.includes("ArrowDown") || activeKeys.includes("KeyS")) {
-                inv = translate4(inv, 0, 0, -0.03);
+                inv = translate4(inv, 0, 0, -0.003);
         }
         if (activeKeys.includes("ArrowLeft") || activeKeys.includes("KeyA"))
-            inv = translate4(inv, -0.01, 0, 0);
+            inv = translate4(inv, -0.003, 0, 0);
         //
         if (activeKeys.includes("ArrowRight") || activeKeys.includes("KeyD"))
-            inv = translate4(inv, 0.01, 0, 0);
+            inv = translate4(inv, 0.003, 0, 0);
         
         if (activeKeys.includes("Space")){
-            inv = translate4(inv, 0, -0.01, 0, world=true)
+            inv = translate4(inv, 0, -0.003, 0, world=true)
         }
         if (activeKeys.includes("ControlLeft")){
-            inv = translate4(inv, 0, 0.01, 0, world=true)
+            inv = translate4(inv, 0, 0.003, 0, world=true)
         }
         
         viewMatrix = invert4(inv);
