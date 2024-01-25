@@ -1,23 +1,150 @@
-<!DOCTYPE html>
-<html>
-
 <head>
-  <title></title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js"></script>
-</head>
 
+  <style>
+    body {
+      background: #231d00;
+    }
+    a, body {
+      color: white;
+    }
+
+    .cube-wrapper {
+      transform-style: preserve-3d;
+    }
+
+    .cube {
+      transform-style: preserve-3d;
+      transform: rotateX(45deg) rotateZ(45deg);
+      animation: rotation 2s infinite;
+    }
+
+    .cube-faces {
+      transform-style: preserve-3d;
+      height: 80px;
+      width: 80px;
+      position: relative;
+      transform-origin: 0 0;
+      transform: translateX(0) translateY(0) translateZ(-40px);
+    }
+
+    .cube-face {
+      position: absolute;
+      inset: 0;
+      background: #0017ff;
+      border: solid 1px #ffffff;
+    }
+    .cube-face.top {
+      transform: translateZ(80px);
+    }
+    .cube-face.front {
+      transform-origin: 0 50%;
+      transform: rotateY(-90deg);
+    }
+    .cube-face.back {
+      transform-origin: 0 50%;
+      transform: rotateY(-90deg) translateZ(-80px);
+    }
+    .cube-face.right {
+      transform-origin: 50% 0;
+      transform: rotateX(-90deg) translateY(-80px);
+    }
+    .cube-face.left {
+      transform-origin: 50% 0;
+      transform: rotateX(-90deg) translateY(-80px) translateZ(80px);
+    }
+
+    @keyframes rotation {
+      0% {
+        transform: rotateX(45deg) rotateY(0) rotateZ(45deg);
+        animation-timing-function: cubic-bezier(
+          0.17,
+          0.84,
+          0.44,
+          1
+        );
+      }
+      50% {
+        transform: rotateX(45deg) rotateY(0) rotateZ(225deg);
+        animation-timing-function: cubic-bezier(
+          0.76,
+          0.05,
+          0.86,
+          0.06
+        );
+      }
+      100% {
+        transform: rotateX(45deg) rotateY(0) rotateZ(405deg);
+        animation-timing-function: cubic-bezier(
+          0.17,
+          0.84,
+          0.44,
+          1
+        );
+      }
+    }
+
+    #progress {
+      position: absolute;
+      top: 0;
+      height: 5px;
+      background: blue;
+      z-index: 99;
+      transition: width 0.1s ease-in-out;
+    }
+
+    #canvas {
+      display: block;
+      touch-action: none;
+      /* specify in gaussian.js */
+      /* width: 0;
+      height: 0; */ 
+    }
+
+  </style>
+  
+</head>
 <body>
-  <a href="gaussian.html">Gaussian</a>
-  <!-- Add raindrop elements dynamically using JavaScript or manually in your HTML -->
-  <!-- For simplicity, I'll show a manual approach -->
-  <div id="raindrops"></div>
-  <!-- Repeat the raindrop element as needed -->
-  <!-- <div class="raindrop"></div> -->
-  <!-- ... -->
+  <div id="gaussian">
+    <div id="progress"></div>
+
+    <div class="scene" id="spinner">
+      <div class="cube-wrapper">
+        <div class="cube">
+          <div class="cube-faces">
+            <div class="cube-face bottom"></div>
+            <div class="cube-face top"></div>
+            <div class="cube-face left"></div>
+            <div class="cube-face right"></div>
+            <div class="cube-face back"></div>
+            <div class="cube-face front"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="viewer" style="position: relative; display: inline-block;">
+      <canvas id="canvas"></canvas>
+      <div id="debug_frame" style="position: absolute; top: 0; pointer-events: none;">
+      <canvas id="canvas_axes" style="z-index: -1;"></canvas>
+      <p id="debug_text" style="z-index: -1;"></p>
+    </div>
+      <div id="toolbar" style="position: relative; display: inline-block;">
+        <button id="fullscreen" style="position: relative; top: 0;">Full Screen</button>
+        <button id="debug_mode" style="position: relative; top: 0;">Debug</button>
+
+        <div id="quality" style="position: relative; display: inline-block;">
+          <span id="fps"></span>
+        </div>
+      </div>
+      
+    </div>
+    
+    
+
+    
+  </div>
   <div id="main_content" style="width: 65%; border: 2px solid black; border-radius: 10px; padding: 20px; margin: 0 auto;">
     <h1>
-      Hi, I'm Mike Tkachuk
+      Hi, I'm Mike
     </h1>
     <p>
       v1<br>
@@ -36,9 +163,18 @@
     <div id="projects">
       <h3>Personal Projects</h3>
     </div>
+    <div id="credits">
+      <h3>Credits</h3>
+      <p>
+        https://github.com/antimatter15/splat/tree/main
+        https://github.com/lasa01/Plumber
+        https://github.com/MikeTkachuk/gaussian-splatting-blender-addon
+        https://github.com/graphdeco-inria/gaussian-splatting
+      </p>
+    </div>
   </div>
-  <div class="flashH"></div>
+
+  <script src="gaussian.js"></script>
+  <script src="script.js"></script>
 
 </body>
-
-</html>

@@ -222,11 +222,6 @@ function normalize(a){
     ]
 }
 
-// function test(a=1){
-//     // viewMatrix = invert4(snapXAxis(invert4(viewMatrix)))
-//     draw_axes()
-// }
-
 function draw_axes(){
     const canvas = document.getElementById("canvas_axes");
     canvas.style.zIndex = 10
@@ -250,12 +245,10 @@ function draw_axes(){
     const debug = document.getElementById("debug_text")
     debug.style.zIndex = 10
     let inv = invert4(viewMatrix)
-    let t = [12,13,14].map(i => inv[i])
+    let t = [12,13,14].map(i => inv[i].toFixed(2))
     debug.innerText = t.toString()
 }
-// TODO normalize rotation matrix occasionally
-// TODO fix snap to axis
-// TODO
+
 
 function createWorker(self) {
     let buffer;
@@ -701,13 +694,13 @@ let defaultViewMatrix = [
 	0, 0, 0, 1,
 ];
 let viewMatrix = defaultViewMatrix;
+let debug = false
+let full_screen = true;
+let canvas_width;
+let canvas_height;    
 async function main() {
     let carousel = true;
-    // const params = new URLSearchParams(location.search);
-    // try {
-    //     viewMatrix = JSON.parse(decodeURIComponent(location.hash.slice(1)));
-    //     carousel = false;
-    // } catch (err) {}
+
     const url = new URL("https://s3.amazonaws.com/mike.tkachuk.net-bucket/final2.splat");
 	console.log(url);
     const req = await fetch(url, {mode: "cors", credentials: "omit"});
@@ -732,6 +725,7 @@ async function main() {
     );
 
     const canvas = document.getElementById("canvas");
+    
     const fps = document.getElementById("fps");
     let projectionMatrix;
 
@@ -800,20 +794,53 @@ async function main() {
     gl.vertexAttribIPointer(a_index, 1, gl.INT, false, 0, 0);
     gl.vertexAttribDivisor(a_index, 1);
 
+    const toggle_fullscreen = () => {
+        if (full_screen){
+            canvas_width = 0.3 * innerWidth
+            canvas_height = 0.3 * innerWidth
+            canvas.style.width = "30vw"
+            canvas.style.height = "30vw"
+        }
+        else {
+            canvas_width = innerWidth
+            canvas_height = 0.95 * innerHeight
+            canvas.style.width = "100%"
+            canvas.style.height = "95%"
+
+        }
+        full_screen = !full_screen
+        window.dispatchEvent(new Event("resize"))
+    }
+    toggle_fullscreen();
+    let full_screen_button = document.getElementById("fullscreen")
+    full_screen_button.onclick = toggle_fullscreen
+
+    const set_debug = () => {
+        debug = !debug
+        let el = document.getElementById("debug_frame")
+        if (debug){
+            el.style.visibility = "visible"
+        }
+        else{
+            el.style.visibility = "hidden"
+        }
+    }
+    let debug_button = document.getElementById("debug_mode")
+    debug_button.onclick = set_debug
+
     const resize = () => {
         gl.uniform2fv(u_focal, new Float32Array([camera.fx, camera.fy]));
 
         projectionMatrix = getProjectionMatrix(
             camera.fx,
             camera.fy,
-            innerWidth,
-            innerHeight,
+            canvas_width,
+            canvas_height,
         );
+        gl.uniform2fv(u_viewport, new Float32Array([canvas_width, canvas_height]));
 
-        gl.uniform2fv(u_viewport, new Float32Array([innerWidth, innerHeight]));
-
-        gl.canvas.width = Math.round(innerWidth / downsample);
-        gl.canvas.height = Math.round(innerHeight / downsample);
+        gl.canvas.width = Math.round(canvas_width / downsample);
+        gl.canvas.height = Math.round(canvas_height / downsample);
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
         gl.uniformMatrix4fv(u_projection, false, projectionMatrix);
@@ -887,7 +914,7 @@ async function main() {
         activeKeys = [];
     });
 
-    window.addEventListener(
+    canvas.addEventListener(
         "wheel",
         (e) => {
             carousel = false;
@@ -949,8 +976,6 @@ async function main() {
             let dy = (3 * (e.clientY - startY)) / innerHeight;
             dx_exp = _lambda * dx_exp + (1 - _lambda) * dx;
             dy_exp = _lambda * dy_exp + (1 - _lambda) * dy;
-
-            console.log(dx, dy)
             
             inv = rotate4(inv, dx_exp, 0, 1, 0);
             inv = rotate4(inv, -dy_exp, 1, 0, 0);
@@ -1039,7 +1064,6 @@ async function main() {
         { passive: false },
     );
 
-    let jumpDelta = 0;
     let vertexCount = 0;
 
     let lastFrame = 0;
@@ -1051,22 +1075,22 @@ async function main() {
         let inv = invert4(viewMatrix);
 
         if (activeKeys.includes("ArrowUp") || activeKeys.includes("KeyW")) {
-                inv = translate4(inv, 0, 0, 0.003);
+                inv = translate4(inv, 0, 0, 0.004);
         }
         if (activeKeys.includes("ArrowDown") || activeKeys.includes("KeyS")) {
-                inv = translate4(inv, 0, 0, -0.003);
+                inv = translate4(inv, 0, 0, -0.004);
         }
         if (activeKeys.includes("ArrowLeft") || activeKeys.includes("KeyA"))
-            inv = translate4(inv, -0.003, 0, 0);
+            inv = translate4(inv, -0.004, 0, 0);
         //
         if (activeKeys.includes("ArrowRight") || activeKeys.includes("KeyD"))
-            inv = translate4(inv, 0.003, 0, 0);
+            inv = translate4(inv, 0.004, 0, 0);
         
         if (activeKeys.includes("Space")){
-            inv = translate4(inv, 0, -0.003, 0, world=true)
+            inv = translate4(inv, 0, -0.004, 0, world=true)
         }
         if (activeKeys.includes("ControlLeft")){
-            inv = translate4(inv, 0, 0.003, 0, world=true)
+            inv = translate4(inv, 0, 0.004, 0, world=true)
         }
         
         viewMatrix = invert4(inv);
@@ -1087,7 +1111,8 @@ async function main() {
         }
 
         viewMatrix = snapXAxis(viewMatrix)
-        // draw_axes()
+        if (debug)
+            draw_axes()
 
         
         let actualViewMatrix = viewMatrix;
@@ -1149,7 +1174,3 @@ async function main() {
 }
 
 main()
-// .catch((err) => {
-//     document.getElementById("spinner").style.display = "none";
-//     document.getElementById("message").innerText = err.toString();
-// });
