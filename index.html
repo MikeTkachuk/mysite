@@ -3,6 +3,7 @@
   <style>
     body {
       background: #231d00;
+      margin: 0;
     }
 
     a,
@@ -12,6 +13,7 @@
 
     .cube-wrapper {
       transform-style: preserve-3d;
+      display: inline-block;
     }
 
     .cube {
@@ -96,69 +98,82 @@
     }
 
     #canvas {
-      display: block;
       touch-action: none;
       border: 1px solid #393000;
       border-radius: 1.5vh;
-
-      /* specify in gaussian.js */
-      /* width: 0;
-      height: 0; */
     }
-    
-    .canvas_inline {
 
+    .canvas_inline {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
     }
 
     .canvas_fullscreen {
-      
+      position: relative;
+      width: 100vw;
+      height: 95vh;
     }
+
+    /* main content */
+    
   </style>
+
+  <base target="_blank">
 
 </head>
 
 <body>
-  <div id="content_left" style="width: 30%; display: inline;">
-    <div id="gaussian" style="display: inline-block;">
-    <div id="progress"></div>
+  <div id="content_left" style="width: 30%; display: inline-block; vertical-align: top;">
+    <div id="gaussian" style="display: inline-block; width: 100%; position: relative;">
+      <div id="progress"></div>
 
-    <div class="scene" id="spinner">
-      <div class="cube-wrapper">
-        <div class="cube">
-          <div class="cube-faces">
-            <div class="cube-face bottom"></div>
-            <div class="cube-face top"></div>
-            <div class="cube-face left"></div>
-            <div class="cube-face right"></div>
-            <div class="cube-face back"></div>
-            <div class="cube-face front"></div>
+      <div class="scene" id="spinner" style="width: 100%; height: 100%; position: absolute; 
+      display: flex; align-items: center; justify-content: center;">
+        <div class="cube-wrapper" style="display: inline-block; position: relative;">
+          <div class="cube">
+            <div class="cube-faces">
+              <div class="cube-face bottom"></div>
+              <div class="cube-face top"></div>
+              <div class="cube-face left"></div>
+              <div class="cube-face right"></div>
+              <div class="cube-face back"></div>
+              <div class="cube-face front"></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div id="viewer" style="position: relative; display: inline-block;">
-      <canvas id="canvas"></canvas>
-      <div id="debug_frame" style="position: absolute; top: 0; pointer-events: none;">
-        <canvas id="canvas_axes" style="z-index: -1;"></canvas>
-        <p id="debug_text" style="z-index: -1;"></p>
-      </div>
-      <div id="toolbar" style="position: relative; display: inline-block; height: 5%">
-        <button id="fullscreen" style="position: relative; top: 0; height: 100%;">
-          <img src="assets/full_screen_button.svg" style="height: 100%; display: block;">
-        </button>
-        <button id="debug_mode" style="position: relative; top: 0; height: 100%;">
-          <img src="assets/debug_button.png" style="height: 100%; display: block;">
-        </button>
-        <button id="info" style="position: relative; top: 0; height: 100%;">
-          <img src="assets/info_button.png" style="height: 100%; display: block;">
-        </button>
-
-        <div id="quality" style="position: relative; display: inline-block; transform: translateY(-50%);">
-          <span id="fps"></span>
+      <div id="viewer" style="position: relative; display: inline-block; width: 100%;">
+        <canvas id="canvas"></canvas>
+        <div id="debug_frame" style="position: absolute; top: 0; pointer-events: none; height: 90%;">
+          <canvas id="canvas_axes" style="z-index: -1;"></canvas>
+          <p id="debug_text" style="z-index: -1;"></p>
+          <div id="info_text" style="visibility: hidden; background-color:rgba(250, 235, 215, 0.7);
+           border: 3px solid black; color: black; padding: 5px; position: absolute; bottom: 0;">
+          <ul style="margin: 0; padding-left: 10%">
+            <li>WASD/arrows to move</li>
+            <li>Wheel/pan to rotate</li>
+            <li>Space/LShift to change altitude</li>
+          </ul>
         </div>
-      </div>
+        </div>
+        <div id="toolbar" style="position: relative; display: inline-block; height: 5vh">
+          <button id="fullscreen" style="position: relative; top: 0; height: 100%;">
+            <img src="assets/full_screen_button.svg" style="height: 100%; display: block;">
+          </button>
+          <button id="debug_mode" style="position: relative; top: 0; height: 100%;">
+            <img src="assets/debug_button.png" style="height: 100%; display: block;">
+          </button>
+          <button id="info" style="position: relative; top: 0; height: 100%;">
+            <img src="assets/info_button.png" style="height: 100%; display: block;">
+          </button>
 
-    </div>
+          <div id="quality" style="position: relative; display: inline-block; transform: translateY(-50%);">
+            <span id="fps"></span>
+          </div>
+        </div>
+
+      </div>
 
 
 
@@ -166,35 +181,32 @@
     </div>
   </div>
   <div id="main_content"
-    style="width: 70%; border: 2px solid black; border-radius: 10px; padding: 20px; margin: 0 auto; display: inline-block;">
+    style="display: inline-block; width: 65%;
+     border: 2px solid black; border-radius: 10px; padding: 1%; margin: 0 1%;">
     <h1>
       Hi, I'm Mike
     </h1>
     <p>
-      v1<br>
-      <hr>
       I'm a machine learning engineer from Kharkiv, Ukraine, currently in Toronto, ON. Though once a local biochemistry
       prodigy, I found myself having most fun in computer vision, reinforcement learning, and 3D stuff. I'm an R&D
       enthusiast at heart, always exploring and experimenting. I work x20 times better when in a small team so hit me up
       if you like to solve something together.
-      <br><br>v2<br>
       <hr>
-      I'm a machine learning engineer from Kharkiv, Ukraine, currently in Toronto, ON. Though once a local biochemistry
-      prodigy, I found myself having most fun in computer vision, reinforcement learning, and 3D stuff. I'm an R&D
-      enthusiast at heart, always exploring and experimenting. I work x20 times better when in a small team so hit me up
-      if you like to solve something together.
     </p>
     <div id="projects">
       <h3>Personal Projects</h3>
     </div>
     <div id="credits">
       <h3>Credits</h3>
-      <p>
-        https://github.com/antimatter15/splat/tree/main
-        https://github.com/lasa01/Plumber
-        https://github.com/MikeTkachuk/gaussian-splatting-blender-addon
-        https://github.com/graphdeco-inria/gaussian-splatting
-      </p>
+      <div>
+        <ul>
+          <li><a href="https://github.com/MikeTkachuk/mysite">https://github.com/MikeTkachuk/mysite</a></li>
+          <li><a href="https://github.com/antimatter15/splat">https://github.com/antimatter15/splat</a></li>
+          <li><a href="https://github.com/lasa01/Plumber">https://github.com/lasa01/Plumber</a></li>
+          <li><a href="https://github.com/MikeTkachuk/gaussian-splatting-blender-addon">https://github.com/MikeTkachuk/gaussian-splatting-blender-addon</a></li>
+          <li><a href="https://github.com/graphdeco-inria/gaussian-splatting">https://github.com/graphdeco-inria/gaussian-splatting</a></li>
+          </ul>
+        </div>
     </div>
   </div>
 

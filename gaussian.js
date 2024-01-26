@@ -796,22 +796,20 @@ async function main() {
 
     const toggle_fullscreen = () => {
         if (full_screen){
-            canvas_width = 0.3 * innerWidth
-            canvas_height = 0.3 * innerWidth
-            canvas.style.width = "30vw"
-            canvas.style.height = "30vw"
+            canvas.classList = "canvas_inline"
             document.getElementsByTagName("body")[0].style.overflow = "auto"
-            document.getElementById("main_content").style.display = "block"
+            document.getElementById("main_content").style.display = "inline-block"
         }
         else {
-            canvas_width = innerWidth
-            canvas_height = 0.95 * innerHeight
-            canvas.style.width = "100%"
-            canvas.style.height = "95%"
+            canvas.classList = "canvas_fullscreen"
             document.getElementsByTagName("body")[0].style.overflow = "hidden"
             document.getElementById("main_content").style.display = "none"
 
         }
+        let canvas_box = canvas.getBoundingClientRect()
+        canvas_width = canvas_box.width
+        canvas_height = canvas_box.height
+
         full_screen = !full_screen
         window.dispatchEvent(new Event("resize"))
     }
@@ -910,7 +908,7 @@ async function main() {
         if (e.code === "KeyP") {
             carousel = true;
         }
-        if (e.code === "Space") {
+        if (e.code === "Space" || e.code === "ShiftLeft") {
             e.preventDefault()
         }
     });
@@ -934,24 +932,10 @@ async function main() {
                     ? innerHeight
                     : 1;
             let inv = invert4(viewMatrix);
-            if (e.shiftKey) {
-                inv = translate4(
-                    inv,
-                    (e.deltaX * scale) / innerWidth,
-                    (e.deltaY * scale) / innerHeight,
-                    0,
-                );
-            } else if (e.ctrlKey || e.metaKey) {
-               inv = translate4(
-                    inv,
-                    0,
-                    0,
-                    (-10 * (e.deltaY * scale)) / innerHeight,
-                );
-            } else {
-                inv = rotate4(inv, (e.deltaX * scale) / innerWidth, 0, 1, 0);
-                inv = rotate4(inv, -(e.deltaY * scale) / innerHeight, 1, 0, 0);
-            }
+           
+            inv = rotate4(inv, (e.deltaX * scale) / innerWidth, 0, 1, 0);
+            inv = rotate4(inv, -(e.deltaY * scale) / innerHeight, 1, 0, 0);
+        
             viewMatrix = invert4(inv);
             
             
@@ -962,21 +946,21 @@ async function main() {
     let startX, startY, down, dx_exp=0, dy_exp=0, _lambda=0.9;
     canvas.addEventListener("mousedown", (e) => {
         carousel = false;
-        e.preventDefault();
+        // e.preventDefault();
         startX = e.clientX;
         startY = e.clientY;
         down = e.ctrlKey || e.metaKey ? 2 : 1;
     });
     canvas.addEventListener("contextmenu", (e) => {
         carousel = false;
-        e.preventDefault();
+        // e.preventDefault();
         startX = e.clientX;
         startY = e.clientY;
         down = 2;
     });
 
     window.addEventListener("mousemove", (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         if (down == 1) {
             let inv = invert4(viewMatrix);
             let dx = (3 * (e.clientX - startX)) / innerWidth;
@@ -1005,7 +989,7 @@ async function main() {
         }
     });
     window.addEventListener("mouseup", (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         down = false;
         startX = 0;
         startY = 0;
@@ -1096,7 +1080,7 @@ async function main() {
         if (activeKeys.includes("Space")){
             inv = translate4(inv, 0, -0.003, 0, world=true)
         }
-        if (activeKeys.includes("ControlLeft")){
+        if (activeKeys.includes("ShiftLeft")){
             inv = translate4(inv, 0, 0.003, 0, world=true)
         }
         
@@ -1126,8 +1110,11 @@ async function main() {
 
         const viewProj = multiply4(projectionMatrix, actualViewMatrix);
         worker.postMessage({ view: viewProj });
-
-        const currentFps = 1000 / (now - lastFrame) || 0;
+        
+        let currentFps = 1000 / (now - lastFrame) || 0;
+        if (currentFps > 1000){
+            currentFps = avgFps
+        }
         avgFps = avgFps * 0.9 + currentFps * 0.1;
 
         if (vertexCount > 0) {
