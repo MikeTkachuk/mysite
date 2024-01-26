@@ -800,12 +800,16 @@ async function main() {
             canvas_height = 0.3 * innerWidth
             canvas.style.width = "30vw"
             canvas.style.height = "30vw"
+            document.getElementsByTagName("body")[0].style.overflow = "auto"
+            document.getElementById("main_content").style.display = "block"
         }
         else {
             canvas_width = innerWidth
             canvas_height = 0.95 * innerHeight
             canvas.style.width = "100%"
             canvas.style.height = "95%"
+            document.getElementsByTagName("body")[0].style.overflow = "hidden"
+            document.getElementById("main_content").style.display = "none"
 
         }
         full_screen = !full_screen
@@ -906,6 +910,9 @@ async function main() {
         if (e.code === "KeyP") {
             carousel = true;
         }
+        if (e.code === "Space") {
+            e.preventDefault()
+        }
     });
     window.addEventListener("keyup", (e) => {
         activeKeys = activeKeys.filter((k) => k !== e.code);
@@ -968,7 +975,7 @@ async function main() {
         down = 2;
     });
 
-    canvas.addEventListener("mousemove", (e) => {
+    window.addEventListener("mousemove", (e) => {
         e.preventDefault();
         if (down == 1) {
             let inv = invert4(viewMatrix);
@@ -997,7 +1004,7 @@ async function main() {
             startY = e.clientY;
         }
     });
-    canvas.addEventListener("mouseup", (e) => {
+    window.addEventListener("mouseup", (e) => {
         e.preventDefault();
         down = false;
         startX = 0;
@@ -1075,22 +1082,22 @@ async function main() {
         let inv = invert4(viewMatrix);
 
         if (activeKeys.includes("ArrowUp") || activeKeys.includes("KeyW")) {
-                inv = translate4(inv, 0, 0, 0.004);
+                inv = translate4(inv, 0, 0, 0.01);
         }
         if (activeKeys.includes("ArrowDown") || activeKeys.includes("KeyS")) {
-                inv = translate4(inv, 0, 0, -0.004);
+                inv = translate4(inv, 0, 0, -0.01);
         }
         if (activeKeys.includes("ArrowLeft") || activeKeys.includes("KeyA"))
-            inv = translate4(inv, -0.004, 0, 0);
+            inv = translate4(inv, -0.003, 0, 0);
         //
         if (activeKeys.includes("ArrowRight") || activeKeys.includes("KeyD"))
-            inv = translate4(inv, 0.004, 0, 0);
+            inv = translate4(inv, 0.003, 0, 0);
         
         if (activeKeys.includes("Space")){
-            inv = translate4(inv, 0, -0.004, 0, world=true)
+            inv = translate4(inv, 0, -0.003, 0, world=true)
         }
         if (activeKeys.includes("ControlLeft")){
-            inv = translate4(inv, 0, 0.004, 0, world=true)
+            inv = translate4(inv, 0, 0.003, 0, world=true)
         }
         
         viewMatrix = invert4(inv);

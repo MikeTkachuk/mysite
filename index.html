@@ -4,7 +4,9 @@
     body {
       background: #231d00;
     }
-    a, body {
+
+    a,
+    body {
       color: white;
     }
 
@@ -33,21 +35,26 @@
       background: #0017ff;
       border: solid 1px #ffffff;
     }
+
     .cube-face.top {
       transform: translateZ(80px);
     }
+
     .cube-face.front {
       transform-origin: 0 50%;
       transform: rotateY(-90deg);
     }
+
     .cube-face.back {
       transform-origin: 0 50%;
       transform: rotateY(-90deg) translateZ(-80px);
     }
+
     .cube-face.right {
       transform-origin: 50% 0;
       transform: rotateX(-90deg) translateY(-80px);
     }
+
     .cube-face.left {
       transform-origin: 50% 0;
       transform: rotateX(-90deg) translateY(-80px) translateZ(80px);
@@ -56,30 +63,26 @@
     @keyframes rotation {
       0% {
         transform: rotateX(45deg) rotateY(0) rotateZ(45deg);
-        animation-timing-function: cubic-bezier(
-          0.17,
-          0.84,
-          0.44,
-          1
-        );
+        animation-timing-function: cubic-bezier(0.17,
+            0.84,
+            0.44,
+            1);
       }
+
       50% {
         transform: rotateX(45deg) rotateY(0) rotateZ(225deg);
-        animation-timing-function: cubic-bezier(
-          0.76,
-          0.05,
-          0.86,
-          0.06
-        );
+        animation-timing-function: cubic-bezier(0.76,
+            0.05,
+            0.86,
+            0.06);
       }
+
       100% {
         transform: rotateX(45deg) rotateY(0) rotateZ(405deg);
-        animation-timing-function: cubic-bezier(
-          0.17,
-          0.84,
-          0.44,
-          1
-        );
+        animation-timing-function: cubic-bezier(0.17,
+            0.84,
+            0.44,
+            1);
       }
     }
 
@@ -95,16 +98,28 @@
     #canvas {
       display: block;
       touch-action: none;
+      border: 1px solid #393000;
+      border-radius: 1.5vh;
+
       /* specify in gaussian.js */
       /* width: 0;
-      height: 0; */ 
+      height: 0; */
+    }
+    
+    .canvas_inline {
+
     }
 
+    .canvas_fullscreen {
+      
+    }
   </style>
-  
+
 </head>
+
 <body>
-  <div id="gaussian">
+  <div id="content_left" style="width: 30%; display: inline;">
+    <div id="gaussian" style="display: inline-block;">
     <div id="progress"></div>
 
     <div class="scene" id="spinner">
@@ -124,25 +139,34 @@
     <div id="viewer" style="position: relative; display: inline-block;">
       <canvas id="canvas"></canvas>
       <div id="debug_frame" style="position: absolute; top: 0; pointer-events: none;">
-      <canvas id="canvas_axes" style="z-index: -1;"></canvas>
-      <p id="debug_text" style="z-index: -1;"></p>
-    </div>
-      <div id="toolbar" style="position: relative; display: inline-block;">
-        <button id="fullscreen" style="position: relative; top: 0;">Full Screen</button>
-        <button id="debug_mode" style="position: relative; top: 0;">Debug</button>
+        <canvas id="canvas_axes" style="z-index: -1;"></canvas>
+        <p id="debug_text" style="z-index: -1;"></p>
+      </div>
+      <div id="toolbar" style="position: relative; display: inline-block; height: 5%">
+        <button id="fullscreen" style="position: relative; top: 0; height: 100%;">
+          <img src="assets/full_screen_button.svg" style="height: 100%; display: block;">
+        </button>
+        <button id="debug_mode" style="position: relative; top: 0; height: 100%;">
+          <img src="assets/debug_button.png" style="height: 100%; display: block;">
+        </button>
+        <button id="info" style="position: relative; top: 0; height: 100%;">
+          <img src="assets/info_button.png" style="height: 100%; display: block;">
+        </button>
 
-        <div id="quality" style="position: relative; display: inline-block;">
+        <div id="quality" style="position: relative; display: inline-block; transform: translateY(-50%);">
           <span id="fps"></span>
         </div>
       </div>
-      
-    </div>
-    
-    
 
-    
+    </div>
+
+
+
+
+    </div>
   </div>
-  <div id="main_content" style="width: 65%; border: 2px solid black; border-radius: 10px; padding: 20px; margin: 0 auto;">
+  <div id="main_content"
+    style="width: 70%; border: 2px solid black; border-radius: 10px; padding: 20px; margin: 0 auto; display: inline-block;">
     <h1>
       Hi, I'm Mike
     </h1>
