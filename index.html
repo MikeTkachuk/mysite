@@ -1,15 +1,19 @@
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
       background: #231d00;
       margin: 0;
+      width: 100%;
     }
 
     a,
     body {
       color: white;
     }
+
+    /* cube */
 
     .cube-wrapper {
       transform-style: preserve-3d;
@@ -88,6 +92,8 @@
       }
     }
 
+    /* end cube */
+
     #progress {
       position: absolute;
       top: 0;
@@ -109,14 +115,98 @@
       aspect-ratio: 1;
     }
 
-    .canvas_fullscreen {
+    #content_left {
+      display: block;
+      width: 80%;
+      padding: 0 10%;
+    }
+
+    #gaussian {
+      display: inline-block;
+      width: 100%;
       position: relative;
-      width: 100vw;
-      height: 95vh;
+    }
+
+    #fullscreen {
+      display: none;
     }
 
     /* main content */
-    
+
+    #main_content {
+      display: block;
+      border: 0.5vw solid black;
+      border-radius: 10px;
+      padding: 5vw;
+      margin: 3vw 3vw;
+    }
+
+    #toolbar {
+      position: relative;
+      display: inline-block;
+      height: 4vh;
+    }
+
+    #toolbar button {
+      position: relative;
+      top: 0;
+      height: 100%;
+    }
+
+    @media only screen and (min-width: 810px) {
+      .canvas_inline {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1;
+      }
+
+      .canvas_fullscreen {
+        position: relative;
+        width: 100vw;
+        height: 95vh;
+      }
+
+      .toolbar-inline {
+        position: relative;
+        display: inline-block;
+        height: 4%
+      }
+
+      .toolbar-fullscreen {
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        height: 4vh;
+      }
+
+      #content_left {
+        width: 30%;
+        display: inline-block;
+        vertical-align: top;
+        padding: 0;
+      }
+
+      #gaussian {
+        display: inline-block;
+        width: 100%;
+        position: relative;
+      }
+
+      #fullscreen {
+        display: inline-block;
+      }
+
+      /* main content */
+
+      #main_content {
+        display: inline-block;
+        width: 65%;
+        border: 2px solid black;
+        border-radius: 10px;
+        padding: 1%;
+        margin: 0 1%;
+      }
+    }
   </style>
 
   <base target="_blank">
@@ -124,8 +214,8 @@
 </head>
 
 <body>
-  <div id="content_left" style="width: 30%; display: inline-block; vertical-align: top;">
-    <div id="gaussian" style="display: inline-block; width: 100%; position: relative;">
+  <div id="content_left">
+    <div id="gaussian">
       <div id="progress"></div>
 
       <div class="scene" id="spinner" style="width: 100%; height: 100%; position: absolute; 
@@ -144,27 +234,30 @@
         </div>
       </div>
       <div id="viewer" style="position: relative; display: inline-block; width: 100%;">
-        <canvas id="canvas"></canvas>
+        <canvas id="canvas" class="canvas_inline"></canvas>
         <div id="debug_frame" style="position: absolute; top: 0; pointer-events: none; height: 90%;">
           <canvas id="canvas_axes" style="z-index: -1;"></canvas>
           <p id="debug_text" style="z-index: -1;"></p>
           <div id="info_text" style="visibility: hidden; background-color:rgba(250, 235, 215, 0.7);
            border: 3px solid black; color: black; padding: 5px; position: absolute; bottom: 0;">
-          <ul style="margin: 0; padding-left: 10%">
-            <li>WASD/arrows to move</li>
-            <li>Wheel/pan to rotate</li>
-            <li>Space/LShift to change altitude</li>
-          </ul>
+            <ul style="margin: 0; padding-left: 10%">
+              <li>WASD/arrows to move</li>
+              <li>Wheel/pan to rotate</li>
+              <li>Space/LShift to change altitude</li>
+            </ul>
+          </div>
         </div>
-        </div>
-        <div id="toolbar" style="position: relative; display: inline-block; height: 5vh">
-          <button id="fullscreen" style="position: relative; top: 0; height: 100%;">
+        <div id="toolbar">
+          <button id="fullscreen">
             <img src="assets/full_screen_button.svg" style="height: 100%; display: block;">
           </button>
-          <button id="debug_mode" style="position: relative; top: 0; height: 100%;">
+          <button id="screensaver">
+            <img src="assets/spin.svg" style="height: 100%; display: block;">
+          </button>
+          <button id="debug_mode">
             <img src="assets/debug_button.png" style="height: 100%; display: block;">
           </button>
-          <button id="info" style="position: relative; top: 0; height: 100%;">
+          <button id="info">
             <img src="assets/info_button.png" style="height: 100%; display: block;">
           </button>
 
@@ -180,9 +273,7 @@
 
     </div>
   </div>
-  <div id="main_content"
-    style="display: inline-block; width: 65%;
-     border: 2px solid black; border-radius: 10px; padding: 1%; margin: 0 1%;">
+  <div id="main_content">
     <h1>
       Hi, I'm Mike
     </h1>
@@ -196,17 +287,21 @@
     <div id="projects">
       <h3>Personal Projects</h3>
     </div>
-    <div id="credits">
+    <div id="credits" style="font-size: small;">
       <h3>Credits</h3>
       <div>
-        <ul>
+        <ul style="padding-left: 6%;">
           <li><a href="https://github.com/MikeTkachuk/mysite">https://github.com/MikeTkachuk/mysite</a></li>
           <li><a href="https://github.com/antimatter15/splat">https://github.com/antimatter15/splat</a></li>
           <li><a href="https://github.com/lasa01/Plumber">https://github.com/lasa01/Plumber</a></li>
-          <li><a href="https://github.com/MikeTkachuk/gaussian-splatting-blender-addon">https://github.com/MikeTkachuk/gaussian-splatting-blender-addon</a></li>
-          <li><a href="https://github.com/graphdeco-inria/gaussian-splatting">https://github.com/graphdeco-inria/gaussian-splatting</a></li>
-          </ul>
-        </div>
+          <li><a
+              href="https://github.com/MikeTkachuk/gaussian-splatting-blender-addon">https://github.com/MikeTkachuk/gaussian-splatting-blender-addon</a>
+          </li>
+          <li><a
+              href="https://github.com/graphdeco-inria/gaussian-splatting">https://github.com/graphdeco-inria/gaussian-splatting</a>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 

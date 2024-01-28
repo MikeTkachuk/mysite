@@ -48,6 +48,14 @@ function getViewMatrix(camera) {
     return camToWorld;
 }
 
+function mean(...a){
+    let sum = 0;
+    for (var i = 0; i < a.length; i++){
+        sum = a[i] / (i + 1) + i / (i + 1) * sum
+    }
+    return sum
+}
+
 function multiply4(a, b) {
     return [
         b[0] * a[0] + b[1] * a[4] + b[2] * a[8] + b[3] * a[12],
@@ -170,7 +178,7 @@ function cross3(a, b) {
 }
 
 function apply3(a, v) {
-    // a is 4x4
+    // compute dot(a, v) a is 4x4
     return [
         a[0] * v[0] + a[1] * v[1] + a[2] * v[2],
         a[4] * v[0] + a[5] * v[1] + a[6] * v[2],
@@ -190,7 +198,7 @@ function snapXAxis(a) {
     }
     let x_proj = [x[0] / x_norm, 0, x[2] / x_norm] // new x axis and normal to yz plane
     let xy_dot = dot3(x_proj, y)
-    let y_proj = [y[0] - xy_dot * x_proj[0], y[1] - xy_dot * x_proj[1], y[2] - xy_dot * x_proj[2]]
+    let y_proj = [y[0] - xy_dot * x_proj[0], Math.abs(y[1] - xy_dot * x_proj[1]), y[2] - xy_dot * x_proj[2]] // lock y to be in positive y hemisphere
     let y_norm = Math.hypot(...y_proj)
     let xz_dot = dot3(x_proj, z)
     // let z_proj = [z[0] - xz_dot * x_proj[0], z[1] - xz_dot * x_proj[1], z[2] - xz_dot * x_proj[2]]
@@ -208,6 +216,32 @@ function snapXAxis(a) {
     let new_tc = apply3(invert4(new_basis), old_tw)
     new_basis = [...new_basis.slice(0, 12), ...new_tc, 1]
     return new_basis
+}
+
+function lock_to(a, x, y, z) {
+    // designed from transform to camera coordinates
+    let tw = apply3(a, a.slice(12, 15))
+    let new_z = normv([x-tw[0], y-tw[1], z-tw[2]]).map(el => -el) // z opposite to the view vector
+    let new_x = normv([-new_z[2], 0, new_z[0]])
+    let new_y = cross3(new_z, new_x)
+    if (new_y[1] < 0){
+        new_y = new_y.map(el => -el)
+        new_x = new_x.map(el => -el)
+    }
+    let new_basis = [
+        new_x[0], new_y[0], new_z[0], 0,
+        new_x[1], new_y[1], new_z[1], 0,
+        new_x[2], new_y[2], new_z[2], 0,
+        ...a.slice(12,16)
+    ]
+    tw = apply3(invert4(new_basis), tw)
+    new_basis = [...new_basis.slice(0, 12), ...tw, 1]
+    return new_basis
+}
+
+function normv(v){
+    let norm = Math.hypot(...v)
+    return v.map(el => el/norm)
 }
 
 function normalize(a){
@@ -236,16 +270,15 @@ function draw_axes(){
         ctx.stroke();
     }
 
-    let norm = 50
-    let a = invert4(viewMatrix)
-    _draw_vector(norm * a[0], norm* a[4])
-    _draw_vector(norm * a[1], norm* a[5], '#00ff00')
-    _draw_vector(norm * a[2], norm* a[6], '#0000ff')
+    let norm = -50 // pixels
+    _draw_vector(norm * viewMatrix[0], norm* viewMatrix[1])
+    _draw_vector(norm * viewMatrix[4], norm* viewMatrix[5], '#00ff00')
+    _draw_vector(norm * viewMatrix[8], norm* viewMatrix[9], '#4444ff')
 
     const debug = document.getElementById("debug_text")
     debug.style.zIndex = 10
-    let inv = invert4(viewMatrix)
-    let t = [12,13,14].map(i => inv[i].toFixed(2))
+    let inv = apply3(viewMatrix, viewMatrix.slice(12,15))
+    let t = inv.map(el => el.toFixed(2))
     debug.innerText = t.toString()
 }
 
@@ -389,7 +422,7 @@ function createWorker(self) {
             lastVertexCount = vertexCount;
         }
 
-        console.time("sort");
+        // console.time("sort");
         let maxDepth = -Infinity;
         let minDepth = Infinity;
         let sizeList = new Int32Array(vertexCount);
@@ -419,7 +452,7 @@ function createWorker(self) {
         for (let i = 0; i < vertexCount; i++)
             depthIndex[starts0[sizeList[i]]++] = i;
 
-        console.timeEnd("sort");
+        // console.timeEnd("sort");
 
         lastProj = viewProj;
         self.postMessage({ depthIndex, viewProj, vertexCount }, [
@@ -691,15 +724,17 @@ let defaultViewMatrix = [
     1, 0, 0, 0,
 	0, 1, 0, 0,
 	0, 0, 1, 0,
-	0, 0, 0, 1,
+	0, 0.8, 1, 1,
 ];
 let viewMatrix = defaultViewMatrix;
 let debug = false
 let full_screen = true;
 let canvas_width;
-let canvas_height;    
+let canvas_height;   
+let start = Date.now();
+
 async function main() {
-    let carousel = true;
+    let carousel = false;
 
     const url = new URL("https://s3.amazonaws.com/mike.tkachuk.net-bucket/final2.splat");
 	console.log(url);
@@ -799,23 +834,23 @@ async function main() {
             canvas.classList = "canvas_inline"
             document.getElementsByTagName("body")[0].style.overflow = "auto"
             document.getElementById("main_content").style.display = "inline-block"
+            document.getElementById("toolbar").classList = "toolbar-inline"
         }
         else {
             canvas.classList = "canvas_fullscreen"
             document.getElementsByTagName("body")[0].style.overflow = "hidden"
             document.getElementById("main_content").style.display = "none"
-
+            document.getElementById("toolbar").classList = "toolbar-fullscreen"
         }
-        let canvas_box = canvas.getBoundingClientRect()
-        canvas_width = canvas_box.width
-        canvas_height = canvas_box.height
-
+        
         full_screen = !full_screen
         window.dispatchEvent(new Event("resize"))
     }
-    toggle_fullscreen();
     let full_screen_button = document.getElementById("fullscreen")
     full_screen_button.onclick = toggle_fullscreen
+    if (full_screen_button.checkVisibility()){
+        toggle_fullscreen();
+    }
 
     const set_debug = () => {
         debug = !debug
@@ -830,7 +865,22 @@ async function main() {
     let debug_button = document.getElementById("debug_mode")
     debug_button.onclick = set_debug
 
+    const toggle_carousel = () => {
+        viewMatrix = lock_to(viewMatrix, -0.05, 0.73, -0.66);
+        defaultViewMatrix = viewMatrix;
+        start = Date.now();
+        carousel = !carousel;
+    }
+    let carousel_button = document.getElementById("screensaver")
+    carousel_button.onclick = toggle_carousel
+    toggle_carousel()
+
     const resize = () => {
+        let canvas_box = canvas.getBoundingClientRect()
+        canvas_width = canvas_box.width
+        canvas_height = canvas_box.height
+
+
         gl.uniform2fv(u_focal, new Float32Array([camera.fx, camera.fy]));
 
         projectionMatrix = getProjectionMatrix(
@@ -902,12 +952,8 @@ async function main() {
     let activeKeys = [];
 
     window.addEventListener("keydown", (e) => {
-        carousel = false;
         if (!activeKeys.includes(e.code)) activeKeys.push(e.code);
 
-        if (e.code === "KeyP") {
-            carousel = true;
-        }
         if (e.code === "Space" || e.code === "ShiftLeft") {
             e.preventDefault()
         }
@@ -1022,14 +1068,12 @@ async function main() {
         "touchmove",
         (e) => {
             e.preventDefault();
-            if (e.touches.length === 1 && down || e.touches.length === 2) {
+            if (e.touches.length === 1 && down) {
                 let inv = invert4(viewMatrix);
                 let dx = (2 * (e.touches[0].clientX - startX)) / innerWidth;
                 let dy = (2 * (e.touches[0].clientY - startY)) / innerHeight;
                 dx_exp = _lambda * dx_exp + (1 - _lambda) * dx;
                 dy_exp = _lambda * dy_exp + (1 - _lambda) * dy;
-
-                console.log("touch", dx, dy)
 
                 inv = rotate4(inv, dx_exp, 0, 1, 0);
                 inv = rotate4(inv, -dy_exp, 1, 0, 0);
@@ -1038,6 +1082,33 @@ async function main() {
 
                 startX = e.touches[0].clientX;
                 startY = e.touches[0].clientY;
+            }
+            else if (e.touches.length === 2) {
+                let dl = Math.hypot(e.touches[1].clientX - e.touches[0].clientX,
+                     e.touches[1].clientY - e.touches[0].clientY) - Math.hypot(altX - startX, altY - startY)
+                dl /= Math.hypot(innerHeight, innerWidth)
+                dl *= 25
+                
+                let dx = (2 * (mean(e.touches[0].clientX, e.touches[1].clientX) - mean(startX,altX))) / innerWidth;
+                let dy = (2 * (mean(e.touches[0].clientY, e.touches[1].clientY) - mean(startY,altY))) / innerHeight;
+                dx_exp = _lambda * dx_exp + (1 - _lambda) * dx;
+                dy_exp = _lambda * dy_exp + (1 - _lambda) * dy;
+                console.log("touch2", dl, dx_exp, dy_exp)
+
+                let inv = invert4(viewMatrix)
+                if (Math.abs(dl) > 0.015)
+                    inv = translate4(inv, 0, 0, dl)
+                else{
+                    inv = rotate4(inv, dx_exp, 0, 1, 0);
+                    inv = rotate4(inv, -dy_exp, 1, 0, 0);
+                }
+
+                viewMatrix = invert4(inv)
+
+                startX = e.touches[0].clientX;
+                altX = e.touches[1].clientX;
+                startY = e.touches[0].clientY;
+                altY = e.touches[1].clientY;
             } 
         },
         { passive: false },
@@ -1059,7 +1130,6 @@ async function main() {
 
     let lastFrame = 0;
     let avgFps = 0;
-    let start = 0;
 
 
     const frame = (now) => {
@@ -1067,33 +1137,41 @@ async function main() {
 
         if (activeKeys.includes("ArrowUp") || activeKeys.includes("KeyW")) {
                 inv = translate4(inv, 0, 0, 0.01);
+                carousel = false;
         }
         if (activeKeys.includes("ArrowDown") || activeKeys.includes("KeyS")) {
                 inv = translate4(inv, 0, 0, -0.01);
+                carousel = false;
         }
-        if (activeKeys.includes("ArrowLeft") || activeKeys.includes("KeyA"))
+        if (activeKeys.includes("ArrowLeft") || activeKeys.includes("KeyA")) {
             inv = translate4(inv, -0.003, 0, 0);
+            carousel = false;
+        }
         //
-        if (activeKeys.includes("ArrowRight") || activeKeys.includes("KeyD"))
+        if (activeKeys.includes("ArrowRight") || activeKeys.includes("KeyD")){
             inv = translate4(inv, 0.003, 0, 0);
+            carousel = false;
+        }
         
         if (activeKeys.includes("Space")){
             inv = translate4(inv, 0, -0.003, 0, world=true)
+            carousel = false;
         }
         if (activeKeys.includes("ShiftLeft")){
             inv = translate4(inv, 0, 0.003, 0, world=true)
+            carousel = false;
         }
         
         viewMatrix = invert4(inv);
 
         if (carousel) {
             let inv = invert4(defaultViewMatrix);
-            inv = translate4(inv, 0, -0.8, -1, world=true)
-            inv = rotate4(inv, -0.1, 1, 0, 0)
+            // inv = translate4(inv, 0, -0.8, -1, world=true)
+            // inv = rotate4(inv, -0.1, 1, 0, 0)
 
             const t = Math.sin((Date.now() - start) / 5000);
+            let  z_dst = Math.hypot(-0.05+inv[12], 0.73+inv[13], -0.66+inv[14])
 
-            let  z_dst = 0.43+1
             inv = translate4(inv, 0, 0, z_dst)
             inv = rotate4(inv, 0.9 * t, 0, 1, 0);
             inv = translate4(inv, 0, 0, -z_dst)
@@ -1102,9 +1180,9 @@ async function main() {
         }
 
         viewMatrix = snapXAxis(viewMatrix)
-        if (debug)
+        if (debug) {
             draw_axes()
-
+        }
         
         let actualViewMatrix = viewMatrix;
 
