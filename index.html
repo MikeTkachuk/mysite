@@ -130,17 +130,6 @@
     #fullscreen {
       display: none;
     }
-
-    /* main content */
-
-    #main_content {
-      display: block;
-      border: 0.5vw solid black;
-      border-radius: 10px;
-      padding: 5vw;
-      margin: 3vw 3vw;
-    }
-
     #toolbar {
       position: relative;
       display: inline-block;
@@ -151,6 +140,42 @@
       position: relative;
       top: 0;
       height: 100%;
+    }
+
+    /* main content */
+
+    #main_content {
+      display: block;
+      border: 0.5vw solid black;
+      border-radius: 10px;
+      padding: 5vw;
+      margin: 3vw 3vw;
+      text-align: justify;
+      margin-bottom: 7%;
+    }
+
+    #credits a {
+      color:rgba(227, 220, 212, 0.85);
+    }
+    #credits {
+      color:rgba(227, 220, 212, 0.85);
+    }
+    
+    #contact {
+      height: 5vh;
+      display: flex;
+      justify-content: center;
+      padding-top: 2vh;
+    }
+
+    #contact a {
+      height: 100%;
+      margin: 0 1%;
+    }
+    #contact img {
+      height: 100%;
+      margin: 0 1%;
+      filter: invert(0.5) sepia(0.5) hue-rotate(0deg);
     }
 
     @media only screen and (min-width: 810px) {
@@ -205,6 +230,20 @@
         border-radius: 10px;
         padding: 1%;
         margin: 0 1%;
+        text-align: justify;
+        margin-bottom: 7%;
+      }
+
+      #contact {
+        height: 5vh;
+        display: flex;
+        justify-content: center;
+        padding-top: 2vh;
+      }
+
+      #contact img {
+        height: 100%;
+        margin: 0 1%;
       }
     }
   </style>
@@ -235,9 +274,9 @@
       </div>
       <div id="viewer" style="position: relative; display: inline-block; width: 100%;">
         <canvas id="canvas" class="canvas_inline"></canvas>
-        <div id="debug_frame" style="position: absolute; top: 0; pointer-events: none; height: 90%;">
-          <canvas id="canvas_axes" style="z-index: -1;"></canvas>
-          <p id="debug_text" style="z-index: -1;"></p>
+        <div id="debug_frame" style="position: absolute; top: 0; pointer-events: none; height: 90%; width:100%">
+          <canvas id="canvas_axes" style="z-index: -1;" height="100" width="100"></canvas>
+          <p id="debug_text" style="z-index: -1; margin: 0;"></p>
           <div id="info_text" style="visibility: hidden; background-color:rgba(250, 235, 215, 0.7);
            border: 3px solid black; color: black; padding: 5px; position: absolute; bottom: 0;">
             <ul style="margin: 0; padding-left: 10%">
@@ -278,33 +317,39 @@
       Hi, I'm Mike
     </h1>
     <p>
-      I'm a machine learning engineer from Kharkiv, Ukraine, currently in Toronto, ON. Though once a local biochemistry
-      prodigy, I found myself having most fun in computer vision, reinforcement learning, and 3D stuff. I'm an R&D
-      enthusiast at heart, always exploring and experimenting. I work x20 times better when in a small team so hit me up
-      if you like to solve something together.
+      I'm an AI engineer from Kharkiv, Ukraine, currently in Toronto, ON.
+       Playing mostly with computer vision/3d graphics and reinforcement learning now.<br>
+        I love working in small teams so hit me up and lets get on a call to solve something together.<br>
+        Please, find my contact info at the end of the page!
       <hr>
     </p>
     <div id="projects">
       <h3>Personal Projects</h3>
     </div>
-    <div id="credits" style="font-size: small;">
-      <h3>Credits</h3>
-      <div>
-        <ul style="padding-left: 6%;">
-          <li><a href="https://github.com/MikeTkachuk/mysite">https://github.com/MikeTkachuk/mysite</a></li>
-          <li><a href="https://github.com/antimatter15/splat">https://github.com/antimatter15/splat</a></li>
-          <li><a href="https://github.com/lasa01/Plumber">https://github.com/lasa01/Plumber</a></li>
-          <li><a
-              href="https://github.com/MikeTkachuk/gaussian-splatting-blender-addon">https://github.com/MikeTkachuk/gaussian-splatting-blender-addon</a>
-          </li>
-          <li><a
-              href="https://github.com/graphdeco-inria/gaussian-splatting">https://github.com/graphdeco-inria/gaussian-splatting</a>
-          </li>
-        </ul>
-      </div>
+  </div>
+  <div id="credits" style="font-size: small; padding-left: 5%; padding-top: 5%;">
+    <h3>Credits</h3>
+    <div>
+      <ul style="padding-left: 1%;">
+        <li><a href="https://github.com/MikeTkachuk/mysite">https://github.com/MikeTkachuk/mysite</a></li>
+        <li><a href="https://github.com/antimatter15/splat">https://github.com/antimatter15/splat</a></li>
+        <li><a href="https://github.com/lasa01/Plumber">https://github.com/lasa01/Plumber</a></li>
+        <li><a
+            href="https://github.com/MikeTkachuk/gaussian-splatting-blender-addon">https://github.com/MikeTkachuk/gaussian-splatting-blender-addon</a>
+        </li>
+        <li><a
+            href="https://github.com/graphdeco-inria/gaussian-splatting">https://github.com/graphdeco-inria/gaussian-splatting</a>
+        </li>
+      </ul>
     </div>
   </div>
-
+  <div style="border: 1px solid rgba(227, 220, 212, 0.85); margin: 2% 2%;"></div>
+  <div id="contact">
+    <a href="https://twitter.com/mike_tkachukk"><img src="assets/twitter.svg" style="height:100%;"></a>
+    <a href="https://www.linkedin.com/in/michael-tkachuk-57b73b182/"><img src="assets/linkedin.svg" style="height:100%;"></a>
+    <a href="https://github.com/MikeTkachuk"><img src="assets/github.svg" style="height:100%;"></a>
+  </div>
+  <p style="font-size: small; text-align: center; color:rgba(227, 220, 212, 0.85);">Mike Tkachuk &copy; <span id="copyright_year"></span></p>
   <script src="gaussian.js"></script>
   <script src="script.js"></script>
 

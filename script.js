@@ -10,3 +10,5 @@ function toggle_info(){
 }
 
 document.getElementById("info").onclick = toggle_info
+
+document.getElementById("copyright_year").innerText = (1800 + Math.round(Math.random()*400)).toString()
