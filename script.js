@@ -12,3 +12,12 @@ function toggle_info(){
 document.getElementById("info").onclick = toggle_info
 
 document.getElementById("copyright_year").innerText = (1800 + Math.round(Math.random()*400)).toString()
+
+function focus_footer(){
+    let footer = document.getElementById('footer')
+    footer.scrollIntoView();
+    footer.style.animation = "none"
+    void footer.offsetWidth;
+    footer.style.animation = "footer_glow 2s ease-out 0s 1"
+}
+document.getElementById("focus_footer").onclick = focus_footer

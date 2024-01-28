@@ -130,6 +130,7 @@
     #fullscreen {
       display: none;
     }
+
     #toolbar {
       position: relative;
       display: inline-block;
@@ -155,12 +156,13 @@
     }
 
     #credits a {
-      color:rgba(227, 220, 212, 0.85);
+      color: rgba(227, 220, 212, 0.85);
     }
+
     #credits {
-      color:rgba(227, 220, 212, 0.85);
+      color: rgba(227, 220, 212, 0.85);
     }
-    
+
     #contact {
       height: 5vh;
       display: flex;
@@ -172,10 +174,26 @@
       height: 100%;
       margin: 0 1%;
     }
+
     #contact img {
       height: 100%;
       margin: 0 1%;
       filter: invert(0.5) sepia(0.5) hue-rotate(0deg);
+    }
+
+    @keyframes footer_glow {
+      0% {
+        box-shadow: 0px -28px 30px -13px #ad15d700 inset;
+
+      }
+      65% {
+        box-shadow: 0px -28px 30px -13px #ad15d7c4 inset;
+
+      }
+      100% {
+        box-shadow: 0px -28px 30px -13px #ad15d700 inset;
+
+      }
     }
 
     @media only screen and (min-width: 810px) {
@@ -318,9 +336,10 @@
     </h1>
     <p>
       I'm an AI engineer from Kharkiv, Ukraine, currently in Toronto, ON.
-       Playing mostly with computer vision/3d graphics and reinforcement learning now.<br>
-        I love working in small teams so hit me up and lets get on a call to solve something together.<br>
-        Please, find my contact info at the end of the page!
+      Playing mostly with computer vision/3d graphics and reinforcement learning now.<br>
+      I love working in small teams so just hit me up to get on a call and start solving something together.<br>
+      <a id="focus_footer"
+        style="background-color: rgba(230, 166, 92, 0.304);">hmu</a>
       <hr>
     </p>
     <div id="projects">
@@ -344,12 +363,16 @@
     </div>
   </div>
   <div style="border: 1px solid rgba(227, 220, 212, 0.85); margin: 2% 2%;"></div>
-  <div id="contact">
-    <a href="https://twitter.com/mike_tkachukk"><img src="assets/twitter.svg" style="height:100%;"></a>
-    <a href="https://www.linkedin.com/in/michael-tkachuk-57b73b182/"><img src="assets/linkedin.svg" style="height:100%;"></a>
-    <a href="https://github.com/MikeTkachuk"><img src="assets/github.svg" style="height:100%;"></a>
+  <div id="footer" class="idle">
+    <div id="contact">
+      <a href="https://twitter.com/mike_tkachukk"><img src="assets/twitter.svg" style="height:100%;"></a>
+      <a href="https://www.linkedin.com/in/michael-tkachuk-57b73b182/"><img src="assets/linkedin.svg"
+          style="height:100%;"></a>
+      <a href="https://github.com/MikeTkachuk"><img src="assets/github.svg" style="height:100%;"></a>
+    </div>
+    <p style="font-size: small; text-align: center; color:rgba(227, 220, 212, 0.85);">Mike Tkachuk &copy; <span
+        id="copyright_year"></span></p>
   </div>
-  <p style="font-size: small; text-align: center; color:rgba(227, 220, 212, 0.85);">Mike Tkachuk &copy; <span id="copyright_year"></span></p>
   <script src="gaussian.js"></script>
   <script src="script.js"></script>
 
