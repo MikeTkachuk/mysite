@@ -1,5 +1,5 @@
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
 
   <style>
     body {
@@ -10,7 +10,10 @@
 
     a,
     body {
-      color: white;
+      color: #faf5e5;
+    }
+    p {
+      text-indent: 2em;
     }
 
     /* cube */
@@ -119,6 +122,7 @@
       display: block;
       width: 80%;
       padding: 0 10%;
+      margin-top: 1em;
     }
 
     #gaussian {
@@ -135,6 +139,7 @@
       position: relative;
       display: inline-block;
       height: 4vh;
+      margin-top: 0.5em;
     }
 
     #toolbar button {
@@ -186,14 +191,66 @@
         box-shadow: 0px -28px 30px -13px #ad15d700 inset;
 
       }
+
       65% {
-        box-shadow: 0px -28px 30px -13px #ad15d7c4 inset;
+        box-shadow: 0px -28px 30px -13px #cdd715c4 inset;
 
       }
+
       100% {
         box-shadow: 0px -28px 30px -13px #ad15d700 inset;
 
       }
+    }
+
+    .hline {
+      border: 1px solid rgba(227, 220, 212, 0.85);
+      margin: 1em 1em;
+    }
+
+    .project {
+      background-color: #8d31477c;
+      border-radius: 10px;
+      padding: 1em 1em;
+      display: block;
+      margin-bottom: 1em;
+    }
+
+    .project_title {
+      color: #faf5e5;
+      text-decoration: underline;
+      margin-top: 0;
+    }
+
+    .project_description {
+      font-size: 1rem;
+    }
+
+    .project_details {
+      background-color: #93716a94;
+      padding: 1em;
+      border-radius: 10px;
+    }
+
+    .project_links::before {
+      content: "Links: ";
+
+    }
+
+    .project_links ul {
+      margin: 0.5em 0;
+      word-break: break-word;
+      list-style: "🔗 ";
+      font-size: smaller;
+    }
+
+    .project_status {
+      margin-top: 1em;
+    }
+
+    .project_status::before {
+      content: "Status: ";
+
     }
 
     @media only screen and (min-width: 810px) {
@@ -205,8 +262,8 @@
 
       .canvas_fullscreen {
         position: relative;
-        width: 100vw;
-        height: 95vh;
+        width: calc(100vw - 2em);
+        height: calc(95vh - 2em);
       }
 
       .toolbar-inline {
@@ -226,7 +283,8 @@
         width: 30%;
         display: inline-block;
         vertical-align: top;
-        padding: 0;
+        padding: 1em;
+        margin-top: 0em;
       }
 
       #gaussian {
@@ -243,11 +301,11 @@
 
       #main_content {
         display: inline-block;
-        width: 65%;
-        border: 2px solid black;
+        width: 63%;
+        border: 1px solid #393000;
         border-radius: 10px;
         padding: 1%;
-        margin: 0 1%;
+        margin: 1em 0;
         text-align: justify;
         margin-bottom: 7%;
       }
@@ -274,7 +332,7 @@
   <div id="content_left">
     <div id="gaussian">
       <div id="progress"></div>
-
+      <div id="message"></div>
       <div class="scene" id="spinner" style="width: 100%; height: 100%; position: absolute; 
       display: flex; align-items: center; justify-content: center;">
         <div class="cube-wrapper" style="display: inline-block; position: relative;">
@@ -318,7 +376,7 @@
             <img src="assets/info_button.png" style="height: 100%; display: block;">
           </button>
 
-          <div id="quality" style="position: relative; display: inline-block; transform: translateY(-50%);">
+          <div id="quality" style="position: relative; display: inline-block;">
             <span id="fps"></span>
           </div>
         </div>
@@ -336,42 +394,84 @@
     </h1>
     <p>
       I'm an AI engineer from Kharkiv, Ukraine, currently in Toronto, ON.
-      Playing mostly with computer vision/3d graphics and reinforcement learning now.<br>
-      I love working in small teams so just hit me up to get on a call and start solving something together.<br>
-      <a id="focus_footer"
-        style="background-color: rgba(230, 166, 92, 0.304);">hmu</a>
-      <hr>
+      Playing mostly with computer vision/3d graphics and reinforcement learning now.
+      I love working in small teams so just hit me up to get on a call and start solving things together.
     </p>
-    <div id="projects">
-      <h3>Personal Projects</h3>
+
+    <div style="display: flex; justify-content: center;">
+      <a id="focus_footer"
+        style="display: inline-block; padding: 4px 9px;
+        background-color: #faf5e5; border-radius: 5px;  border: 5px solid #8d3147; color: #8d3147; font-weight: 600;">hmu</a>
+    </div>
+    <div class="hline"></div>
+    <div id="projects" style="display: flex; align-content: center; flex-direction: column;">
+      <h2>Current Projects</h2>
+      <div class="project">
+        <h3 class="project_title">Brawl Stars AI</h3>
+        <p class="project_description">Lets agents play Brawl Stars on PC by taking screenshots and acting by
+          controlling the mouse/keyboard.</p>
+        <div class="project_details">
+
+          <div class="project_links">
+            <ul>
+              <li><a
+                  href="https://github.com/MikeTkachuk/Brawl-Stars-AI">https://github.com/MikeTkachuk/Brawl-Stars-AI</a>
+              </li>
+              <li><a href="https://github.com/MikeTkachuk/Brawl_iris">https://github.com/MikeTkachuk/Brawl_iris</a></li>
+              <li><a
+                  href="https://github.com/MikeTkachuk/EC2-Job-Runner">https://github.com/MikeTkachuk/EC2-Job-Runner</a>
+              </li>
+            </ul>
+          </div>
+          <div class="project_status">🧪 Experimentation</div>
+        </div>
+      </div>
+      <div class="project">
+        <h3 class="project_title">Data annotation with sparse human input</h3>
+        <p class="project_description">Since human time is much more valuable than inference time, why don't we optimize
+          data annotation process accordingly.</p>
+        <div class="project_details">
+          <div class="project_links">
+            <ul>
+              <li><a
+                  href="https://github.com/MikeTkachuk/text2image_annotator">https://github.com/MikeTkachuk/text2image_annotator</a>
+              </li>
+            </ul>
+          </div>
+          <div class="project_status">🔧 Work in progress</div>
+        </div>
+      </div>
+      <img src="assets/three-dots.svg" style="height: 7em">
     </div>
   </div>
-  <div id="credits" style="font-size: small; padding-left: 5%; padding-top: 5%;">
-    <h3>Credits</h3>
-    <div>
-      <ul style="padding-left: 1%;">
-        <li><a href="https://github.com/MikeTkachuk/mysite">https://github.com/MikeTkachuk/mysite</a></li>
-        <li><a href="https://github.com/antimatter15/splat">https://github.com/antimatter15/splat</a></li>
-        <li><a href="https://github.com/lasa01/Plumber">https://github.com/lasa01/Plumber</a></li>
-        <li><a
-            href="https://github.com/MikeTkachuk/gaussian-splatting-blender-addon">https://github.com/MikeTkachuk/gaussian-splatting-blender-addon</a>
-        </li>
-        <li><a
-            href="https://github.com/graphdeco-inria/gaussian-splatting">https://github.com/graphdeco-inria/gaussian-splatting</a>
-        </li>
-      </ul>
+  <div id="footer_plus">
+    <div id="credits" style="font-size: small; padding-left: 5%; padding-top: 5%;">
+      <h3>Credits</h3>
+      <div>
+        <ul style="padding-left: 1%;">
+          <li><a href="https://github.com/MikeTkachuk/mysite">https://github.com/MikeTkachuk/mysite</a></li>
+          <li><a href="https://github.com/antimatter15/splat">https://github.com/antimatter15/splat</a></li>
+          <li><a href="https://github.com/lasa01/Plumber">https://github.com/lasa01/Plumber</a></li>
+          <li><a
+              href="https://github.com/MikeTkachuk/gaussian-splatting-blender-addon">https://github.com/MikeTkachuk/gaussian-splatting-blender-addon</a>
+          </li>
+          <li><a
+              href="https://github.com/graphdeco-inria/gaussian-splatting">https://github.com/graphdeco-inria/gaussian-splatting</a>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
-  <div style="border: 1px solid rgba(227, 220, 212, 0.85); margin: 2% 2%;"></div>
-  <div id="footer" class="idle">
-    <div id="contact">
-      <a href="https://twitter.com/mike_tkachukk"><img src="assets/twitter.svg" style="height:100%;"></a>
-      <a href="https://www.linkedin.com/in/michael-tkachuk-57b73b182/"><img src="assets/linkedin.svg"
-          style="height:100%;"></a>
-      <a href="https://github.com/MikeTkachuk"><img src="assets/github.svg" style="height:100%;"></a>
+    <div class="hline"></div>
+    <div id="footer" class="idle">
+      <div id="contact">
+        <a href="https://twitter.com/mike_tkachukk"><img src="assets/twitter.svg" style="height:100%;"></a>
+        <a href="https://www.linkedin.com/in/michael-tkachuk-57b73b182/"><img src="assets/linkedin.svg"
+            style="height:100%;"></a>
+        <a href="https://github.com/MikeTkachuk"><img src="assets/github.svg" style="height:100%;"></a>
+      </div>
+      <p style="font-size: small; text-align: center; color:rgba(227, 220, 212, 0.85);">Mike Tkachuk &copy; <span
+          id="copyright_year"></span></p>
     </div>
-    <p style="font-size: small; text-align: center; color:rgba(227, 220, 212, 0.85);">Mike Tkachuk &copy; <span
-        id="copyright_year"></span></p>
   </div>
   <script src="gaussian.js"></script>
   <script src="script.js"></script>

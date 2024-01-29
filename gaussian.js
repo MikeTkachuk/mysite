@@ -834,12 +834,14 @@ async function main() {
             canvas.classList = "canvas_inline"
             document.getElementsByTagName("body")[0].style.overflow = "auto"
             document.getElementById("main_content").style.display = "inline-block"
+            document.getElementById("footer_plus").style.display = "block"
             document.getElementById("toolbar").classList = "toolbar-inline"
         }
         else {
             canvas.classList = "canvas_fullscreen"
             document.getElementsByTagName("body")[0].style.overflow = "hidden"
             document.getElementById("main_content").style.display = "none"
+            document.getElementById("footer_plus").style.display = "none"
             document.getElementById("toolbar").classList = "toolbar-fullscreen"
         }
         
@@ -848,7 +850,7 @@ async function main() {
     }
     let full_screen_button = document.getElementById("fullscreen")
     full_screen_button.onclick = toggle_fullscreen
-    if (full_screen_button.checkVisibility()){
+    if (window.getComputedStyle(full_screen_button).display != 'none'){
         toggle_fullscreen();
     }
 
@@ -1245,4 +1247,7 @@ async function main() {
         });
 }
 
-main()
+main().catch((err) => {
+    document.getElementById("spinner").style.display = "none";
+    document.getElementById("message").innerText = err.toString();
+});
