@@ -736,7 +736,7 @@ let start = Date.now();
 async function main() {
     let carousel = false;
 
-    const url = new URL("https://s3.amazonaws.com/mike.tkachuk.net-bucket/final2.splat");
+    const url = new URL("https://mike.tkachuk.net/public/final2.splat");
 	console.log(url);
     const req = await fetch(url, {mode: "cors", credentials: "omit"});
     console.log(req);

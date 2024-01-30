@@ -21,3 +21,4 @@ function focus_footer(){
     footer.style.animation = "footer_glow 2s ease-out 0s 1"
 }
 document.getElementById("focus_footer").onclick = focus_footer
+document.getElementById("three_dots_img").onclick = focus_footer

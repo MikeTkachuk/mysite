@@ -12,6 +12,7 @@
     body {
       color: #faf5e5;
     }
+
     p {
       text-indent: 2em;
     }
@@ -160,6 +161,17 @@
       margin-bottom: 7%;
     }
 
+    #focus_footer {
+      display: inline-block;
+      padding: 4px 9px;
+      background-color: #faf5e5;
+      border-radius: 5px;
+      box-shadow: 0 0 0 5px #8d3147;
+      color: #8d3147;
+      font-weight: 600;
+      margin: 1em;
+    }
+
     #credits a {
       color: rgba(227, 220, 212, 0.85);
     }
@@ -177,15 +189,18 @@
 
     #contact a {
       height: 100%;
-      margin: 0 1%;
+      margin: 0;
     }
 
     #contact img {
       height: 100%;
-      margin: 0 1%;
+      margin: 0 0.7em;
       filter: invert(0.5) sepia(0.5) hue-rotate(0deg);
     }
 
+    #footer p{
+      text-indent: 0;
+    }
     @keyframes footer_glow {
       0% {
         box-shadow: 0px -28px 30px -13px #ad15d700 inset;
@@ -193,7 +208,7 @@
       }
 
       65% {
-        box-shadow: 0px -28px 30px -13px #cdd715c4 inset;
+        box-shadow: 0px -28px 30px -13px #a38d00 inset;
 
       }
 
@@ -253,6 +268,26 @@
 
     }
 
+    @keyframes three_dots_glow {
+      0% {
+        box-shadow: inset 0 0px 15px 10px #3a3000;
+      }
+
+      50% {
+        box-shadow: inset 0 0px 28px 15px #403700;
+      }
+
+      100% {
+        box-shadow: inset 0 0px 15px 10px #3a3000;
+      }
+    }
+
+    #three_dots_img {
+      height: 7em;
+      border-radius: 10px;
+      animation: three_dots_glow 5s cubic-bezier(0.45, 0.05, 0.55, 0.95) 0s infinite;
+    }
+
     @media only screen and (min-width: 810px) {
       .canvas_inline {
         position: relative;
@@ -310,17 +345,6 @@
         margin-bottom: 7%;
       }
 
-      #contact {
-        height: 5vh;
-        display: flex;
-        justify-content: center;
-        padding-top: 2vh;
-      }
-
-      #contact img {
-        height: 100%;
-        margin: 0 1%;
-      }
     }
   </style>
 
@@ -393,23 +417,21 @@
       Hi, I'm Mike
     </h1>
     <p>
-      I'm an AI engineer from Kharkiv, Ukraine, currently in Toronto, ON.
-      Playing mostly with computer vision/3d graphics and reinforcement learning now.
-      I love working in small teams so just hit me up to get on a call and start solving things together.
+      I'm an AI engineer living in Toronto, ON.
+      Playing mostly with computer vision/3d graphics and reinforcement learning now but am never limited by that.
+      I love working in teams so just hit me up to get on a call and start solving things together.
     </p>
 
     <div style="display: flex; justify-content: center;">
-      <a id="focus_footer"
-        style="display: inline-block; padding: 4px 9px;
-        background-color: #faf5e5; border-radius: 5px;  border: 5px solid #8d3147; color: #8d3147; font-weight: 600;">hmu</a>
+      <a id="focus_footer">hmu</a>
     </div>
     <div class="hline"></div>
     <div id="projects" style="display: flex; align-content: center; flex-direction: column;">
       <h2>Current Projects</h2>
       <div class="project">
         <h3 class="project_title">Brawl Stars AI</h3>
-        <p class="project_description">Lets agents play Brawl Stars on PC by taking screenshots and acting by
-          controlling the mouse/keyboard.</p>
+        <p class="project_description">Lets agents play Brawl Stars on PC by taking screenshots and controlling the
+          mouse/keyboard.</p>
         <div class="project_details">
 
           <div class="project_links">
@@ -441,7 +463,7 @@
           <div class="project_status">🔧 Work in progress</div>
         </div>
       </div>
-      <img src="assets/three-dots.svg" style="height: 7em">
+      <img id="three_dots_img" src="assets/three-dots.svg">
     </div>
   </div>
   <div id="footer_plus">
