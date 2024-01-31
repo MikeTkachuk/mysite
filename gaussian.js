@@ -736,9 +736,7 @@ let start = Date.now();
 async function main() {
     let carousel = false;
 
-    const url = new URL("https://mike.tkachuk.net/public/final2.splat");
-	console.log(url);
-    const req = await fetch(url, {mode: "cors", credentials: "omit"});
+    const req = await fetch("/final2.splat");
     console.log(req);
     if (req.status != 200)
         throw new Error(req.status + " Unable to load " + req.url);
